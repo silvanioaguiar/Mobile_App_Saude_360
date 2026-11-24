@@ -3,6 +3,16 @@
 **Grupo 07 · Faculdade Impacta · Prof. Dr. Uedson Reis**
 Entrega: 03/12/2026, apenas via repositório.
 
+## Integrantes
+
+| Integrante | Papel no POD |
+| --- | --- |
+| Silvanio Aguiar | Tech Lead |
+| Wellington Lima | Product Owner |
+| Lucas llech | Quality & Ops |
+
+Plataforma alvo: **Android**.
+
 App Flutter (Dart) com 4 telas do projeto Saúde360 IA do Bootcamp
 ([repositório do grupo](https://github.com/Saude360-IA/Software_Project_Saude360_Impacta_MBA)).
 **Todos os dados são fictícios.** Não há diagnóstico, prescrição nem uso clínico.
@@ -32,11 +42,14 @@ Persistência local com `shared_preferences` (JSON), equivalente ao AsyncStorage
 ```bash
 flutter pub get
 flutter test
-flutter run -d chrome     # ou -d windows / dispositivo Android
+flutter devices           # lista emuladores e aparelhos conectados
+flutter run -d android    # emulador Android ou aparelho com depuração USB
 ```
 
-> No Windows, o alvo `windows` exige o **Modo Desenvolvedor** ativo
-> (`start ms-settings:developers`) por causa dos plugins.
+Para gerar o APK: `flutter build apk --debug` (saída em `build/app/outputs/flutter-apk/`).
+
+> No Windows, o **Modo Desenvolvedor** precisa estar ativo
+> (`start ms-settings:developers`) para o Flutter instalar os plugins.
 
 ## Estrutura
 
