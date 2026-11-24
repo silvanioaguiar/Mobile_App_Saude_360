@@ -14,6 +14,8 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const _Logo(),
+          const SizedBox(height: 16),
           Text('Bem-vindo!', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
           const Text('Demonstração com dados fictícios, sem uso clínico.'),
@@ -42,6 +44,27 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// O JPEG tem fundo próprio (#F7F7F7); o cartão usa a mesma cor para o logo
+/// não aparecer como um retângulo solto.
+class _Logo extends StatelessWidget {
+  const _Logo();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 160,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F7F7),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Image.asset(
+          'assets/images/logo_saude360.jpeg',
+          fit: BoxFit.contain,
+          semanticLabel: 'Logo Saúde360 IA',
+        ),
+      );
 }
 
 class _Resumo extends StatelessWidget {

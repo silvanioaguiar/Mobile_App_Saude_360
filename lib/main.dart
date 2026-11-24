@@ -7,6 +7,7 @@ import 'screens/checklist_visita_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/usuario_form_screen.dart';
 import 'screens/usuarios_screen.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +27,7 @@ class Saude360App extends StatelessWidget {
       repositorio: repositorio,
       child: MaterialApp(
         title: 'Saúde360',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.light,
         initialRoute: '/',
         routes: {
           '/': (_) => const HomeScreen(),

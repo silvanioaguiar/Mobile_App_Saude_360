@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 /// Item da agenda: morador, grupo e situação (pendente ou concluída).
 class VisitaTile extends StatelessWidget {
   const VisitaTile({
@@ -20,7 +22,7 @@ class VisitaTile extends StatelessWidget {
     return ListTile(
       leading: Icon(
         concluida ? Icons.check_circle : Icons.radio_button_unchecked,
-        color: concluida ? Theme.of(context).colorScheme.primary : null,
+        color: concluida ? Cores.success : null,
       ),
       title: Text(morador),
       subtitle: Text(subtitulo),

@@ -30,6 +30,13 @@ App Flutter (Dart) com 5 telas do projeto Saúde360 IA do Bootcamp
 > **Nota sobre o número de telas:** o enunciado prevê de 2 a 4 telas. O grupo optou por 5
 > (a Agenda é a tela extra). **A confirmar com o Prof. Uedson.**
 
+## Identidade visual
+
+Tema em `lib/theme/app_theme.dart`, com a paleta do Saúde360: primária `#002B4B`,
+secundária `#087DCE`, teal `#00A6B2`, sucesso `#19C65A` (visitas e itens concluídos),
+fundo `#E8F5FA` e branco `#FFFFFF`. O logo fica em `assets/images/logo_saude360.jpeg`
+e aparece na Home.
+
 ## Como as visitas são geradas
 
 O perfil do agente comunitário de saúde (ACS) combina **território** e **grupo prioritário**
