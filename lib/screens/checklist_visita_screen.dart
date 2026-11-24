@@ -5,6 +5,8 @@ import '../models/visita.dart';
 import '../widgets/checklist_item_tile.dart';
 import '../widgets/progresso_visita.dart';
 
+/// Checklist de uma visita gerada pela agenda. Recebe a [VisitaPlanejada]
+/// pelos arguments da rota e devolve `true` ao concluir.
 class ChecklistVisitaScreen extends StatefulWidget {
   const ChecklistVisitaScreen({super.key});
 
@@ -13,12 +15,21 @@ class ChecklistVisitaScreen extends StatefulWidget {
 }
 
 class _ChecklistVisitaScreenState extends State<ChecklistVisitaScreen> {
-  String? _agenteId;
-  String _morador = moradoresSinteticos.first;
-  final _marcados = List<bool>.filled(itensChecklist.length, false);
+  late final VisitaPlanejada _visita;
+  late final List<bool> _marcados;
   final _obs = TextEditingController();
+  bool _inicializado = false;
 
   int get _feitos => _marcados.where((m) => m).length;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_inicializado) return;
+    _inicializado = true;
+    _visita = ModalRoute.of(context)!.settings.arguments as VisitaPlanejada;
+    _marcados = List<bool>.filled(_visita.itens.length, false);
+  }
 
   @override
   void dispose() {
@@ -31,60 +42,42 @@ class _ChecklistVisitaScreenState extends State<ChecklistVisitaScreen> {
     final nav = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
     await repo.registrarVisita(Visita(
-      id: repo.novoId(),
-      agenteId: _agenteId!,
-      morador: _morador,
+      id: _visita.id,
+      agenteId: _visita.agenteId,
+      morador: _visita.morador,
+      grupo: _visita.grupo,
       marcados: List.of(_marcados),
       observacao: _obs.text.trim(),
       data: DateTime.now(),
     ));
-    messenger.showSnackBar(
-        SnackBar(content: Text('Visita registrada ($_feitos/${_marcados.length}).')));
-    nav.pop();
+    messenger.showSnackBar(SnackBar(
+        content: Text('Visita registrada ($_feitos/${_marcados.length}).')));
+    nav.pop(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final agentes = EscopoRepositorio.of(context).agentes;
-    final pronto = _agenteId != null;
-
+    final itens = _visita.itens;
     return Scaffold(
       appBar: AppBar(title: const Text('Checklist de visita')),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(children: [
-              DropdownButtonFormField<String>(
-                value: _agenteId,
-                decoration: const InputDecoration(
-                    labelText: 'Agente (ACS ativo)',
-                    border: OutlineInputBorder()),
-                items: [
-                  for (final a in agentes)
-                    DropdownMenuItem(
-                        value: a.id, child: Text('${a.nome} · ${a.territorio}')),
-                ],
-                onChanged: (v) => setState(() => _agenteId = v),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _morador,
-                decoration: const InputDecoration(
-                    labelText: 'Morador (fictício)',
-                    border: OutlineInputBorder()),
-                items: [
-                  for (final m in moradoresSinteticos)
-                    DropdownMenuItem(value: m, child: Text(m)),
-                ],
-                onChanged: (v) => setState(() => _morador = v!),
-              ),
-            ]),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_visita.morador,
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text('${_visita.territorio} · ${_visita.grupo.rotulo}'),
+              ],
+            ),
           ),
           ProgressoVisita(feitos: _feitos, total: _marcados.length),
-          for (var i = 0; i < itensChecklist.length; i++)
+          for (var i = 0; i < itens.length; i++)
             ChecklistItemTile(
-              rotulo: itensChecklist[i],
+              rotulo: itens[i],
               marcado: _marcados[i],
               onChanged: (v) => setState(() => _marcados[i] = v),
             ),
@@ -100,9 +93,7 @@ class _ChecklistVisitaScreenState extends State<ChecklistVisitaScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: FilledButton(
-              onPressed: pronto ? _concluir : null,
-              child: Text(pronto ? 'Concluir visita' : 'Escolha o agente'),
-            ),
+                onPressed: _concluir, child: const Text('Concluir visita')),
           ),
           const SizedBox(height: 24),
         ],

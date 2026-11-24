@@ -1,36 +1,44 @@
-/// Itens do checklist de visita domiciliar (neutros, sem conteúdo clínico).
-const itensChecklist = [
-  'Identidade do morador confirmada',
-  'Endereço localizado',
-  'Morador presente na visita',
-  'Orientações entregues',
-  'Acompanhamento pendente revisado',
-  'Necessidade de retorno marcada',
-];
+import 'usuario.dart';
 
-/// Moradores fictícios usados na demonstração.
-const moradoresSinteticos = [
-  'Morador Fictício 01',
-  'Morador Fictício 02',
-  'Morador Fictício 03',
-  'Morador Fictício 04',
-];
-
-class Visita {
-  const Visita({
+/// Visita gerada pela agenda do agente (ainda não realizada).
+class VisitaPlanejada {
+  const VisitaPlanejada({
     required this.id,
     required this.agenteId,
     required this.morador,
-    required this.marcados,
-    required this.observacao,
-    required this.data,
+    required this.territorio,
+    required this.grupo,
   });
 
   final String id;
   final String agenteId;
   final String morador;
+  final String territorio;
+  final GrupoPrioritario grupo;
 
-  /// Mesmo tamanho de [itensChecklist]; true = item cumprido.
+  /// Itens do checklist: comuns + específicos do grupo.
+  List<String> get itens => grupo.itens;
+}
+
+/// Visita concluída, com o checklist preenchido.
+class Visita {
+  const Visita({
+    required this.id,
+    required this.agenteId,
+    required this.morador,
+    required this.grupo,
+    required this.marcados,
+    required this.observacao,
+    required this.data,
+  });
+
+  /// Mesmo id da [VisitaPlanejada] que originou esta visita.
+  final String id;
+  final String agenteId;
+  final String morador;
+  final GrupoPrioritario grupo;
+
+  /// Mesmo tamanho de `grupo.itens`; true = item cumprido.
   final List<bool> marcados;
   final String observacao;
   final DateTime data;
@@ -41,6 +49,7 @@ class Visita {
         'id': id,
         'agenteId': agenteId,
         'morador': morador,
+        'grupo': grupo.name,
         'marcados': marcados,
         'observacao': observacao,
         'data': data.toIso8601String(),
@@ -50,6 +59,8 @@ class Visita {
         id: j['id'] as String,
         agenteId: j['agenteId'] as String,
         morador: j['morador'] as String,
+        grupo: GrupoPrioritario.values
+            .byName(j['grupo'] as String? ?? GrupoPrioritario.idosos.name),
         marcados: (j['marcados'] as List).cast<bool>(),
         observacao: j['observacao'] as String? ?? '',
         data: DateTime.parse(j['data'] as String),

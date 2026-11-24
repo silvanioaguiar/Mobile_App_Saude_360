@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               Expanded(child: _Resumo('Usuários', repo.usuarios.length)),
               const SizedBox(width: 12),
-              Expanded(child: _Resumo('Visitas', repo.visitas.length)),
+              Expanded(child: _Resumo('Visitas concluídas', repo.visitas.length)),
             ],
           ),
           const SizedBox(height: 16),
@@ -34,9 +34,9 @@ class HomeScreen extends StatelessWidget {
           ),
           AppCard(
             icone: Icons.fact_check,
-            titulo: 'Nova visita',
-            subtitulo: 'Checklist de visita domiciliar',
-            onTap: () => Navigator.pushNamed(context, '/visita'),
+            titulo: 'Agenda de visitas',
+            subtitulo: 'Visitas geradas pelo perfil do agente',
+            onTap: () => Navigator.pushNamed(context, '/agenda'),
           ),
         ],
       ),

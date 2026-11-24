@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data/escopo.dart';
 import 'data/repositorio.dart';
+import 'screens/agenda_screen.dart';
 import 'screens/checklist_visita_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/usuario_form_screen.dart';
@@ -34,6 +35,7 @@ class Saude360App extends StatelessWidget {
           '/': (_) => const HomeScreen(),
           '/usuarios': (_) => const UsuariosScreen(),
           '/usuario': (_) => const UsuarioFormScreen(),
+          '/agenda': (_) => const AgendaScreen(),
           '/visita': (_) => const ChecklistVisitaScreen(),
         },
       ),

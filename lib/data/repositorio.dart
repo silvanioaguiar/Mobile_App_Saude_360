@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/usuario.dart';
 import '../models/visita.dart';
+import 'agenda.dart';
 
 /// Estado compartilhado do app (ChangeNotifier) com persistência local.
 class Repositorio extends ChangeNotifier {
@@ -21,6 +22,18 @@ class Repositorio extends ChangeNotifier {
   List<Visita> get visitas => List.unmodifiable(_visitas);
   List<Usuario> get agentes =>
       _usuarios.where((u) => u.perfil == Perfil.acs && u.ativo).toList();
+
+  /// Visitas da agenda do agente que ainda não foram concluídas.
+  List<VisitaPlanejada> pendentes(Usuario acs) {
+    final feitas = _visitas.map((v) => v.id).toSet();
+    return gerarAgenda(acs).where((p) => !feitas.contains(p.id)).toList();
+  }
+
+  /// Visitas já concluídas do agente (mais recentes primeiro).
+  List<Visita> concluidas(Usuario acs) => _visitas
+      .where((v) => v.agenteId == acs.id)
+      .toList()
+    ..sort((a, b) => b.data.compareTo(a.data));
 
   /// Carrega do armazenamento local; se vazio, usa dados sintéticos.
   Future<void> carregar() async {
@@ -92,13 +105,15 @@ class Repositorio extends ChangeNotifier {
         nome: 'Bruno Lima (fictício)',
         email: 'bruno@exemplo.test',
         perfil: Perfil.acs,
-        territorio: 'Território A'),
+        territorio: 'Território A',
+        grupo: GrupoPrioritario.idosos),
     Usuario(
         id: 's3',
         nome: 'Carla Dias (fictícia)',
         email: 'carla@exemplo.test',
         perfil: Perfil.acs,
-        territorio: 'Território B'),
+        territorio: 'Território B',
+        grupo: GrupoPrioritario.gestantes),
     Usuario(
         id: 's4',
         nome: 'Daniel Rocha (fictício)',

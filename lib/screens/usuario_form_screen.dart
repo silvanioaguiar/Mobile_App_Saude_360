@@ -17,6 +17,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
   final _email = TextEditingController();
   Perfil _perfil = Perfil.acs;
   String _territorio = territorios.first;
+  GrupoPrioritario _grupo = GrupoPrioritario.idosos;
   bool _ativo = true;
   Usuario? _editando;
   bool _inicializado = false;
@@ -33,6 +34,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       _email.text = arg.email;
       _perfil = arg.perfil;
       _territorio = arg.territorio;
+      _grupo = arg.grupo ?? GrupoPrioritario.idosos;
       _ativo = arg.ativo;
     }
   }
@@ -55,6 +57,8 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       email: _email.text.trim(),
       perfil: _perfil,
       territorio: _territorio,
+      // Só o agente comunitário tem grupo prioritário (gera a agenda dele).
+      grupo: _perfil == Perfil.acs ? _grupo : null,
       ativo: _ativo,
     );
     await repo.salvarUsuario(usuario);
@@ -111,6 +115,20 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
               ],
               onChanged: (v) => setState(() => _territorio = v!),
             ),
+            if (_perfil == Perfil.acs) ...[
+              const SizedBox(height: 16),
+              DropdownButtonFormField<GrupoPrioritario>(
+                value: _grupo,
+                decoration: const InputDecoration(
+                    labelText: 'Grupo prioritário (define a agenda de visitas)',
+                    border: OutlineInputBorder()),
+                items: [
+                  for (final g in GrupoPrioritario.values)
+                    DropdownMenuItem(value: g, child: Text(g.rotulo)),
+                ],
+                onChanged: (v) => setState(() => _grupo = v!),
+              ),
+            ],
             SwitchListTile(
               title: const Text('Usuário ativo'),
               value: _ativo,
