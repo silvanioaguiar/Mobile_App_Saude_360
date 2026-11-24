@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Olá! Grupo 07', style: Theme.of(context).textTheme.headlineSmall),
+          Text('Bem-vindo!', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),
           const Text('Demonstração com dados fictícios, sem uso clínico.'),
           const SizedBox(height: 16),
