@@ -34,7 +34,7 @@ App Flutter (Dart) com 5 telas do projeto Saúde360 IA do Bootcamp
 
 Tema em `lib/theme/app_theme.dart`, com a paleta do Saúde360: primária `#002B4B`,
 secundária `#087DCE`, teal `#00A6B2`, sucesso `#19C65A` (visitas e itens concluídos),
-fundo `#E8F5FA` e branco `#FFFFFF`. O logo fica em `assets/images/logo_saude360.jpeg`
+fundo `#E8F5FA` e branco `#FFFFFF`. O logo fica em `assets/images/Logo_360_fundo_transparente.png`
 e aparece na Home.
 
 ## Como as visitas são geradas

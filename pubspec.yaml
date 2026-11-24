@@ -60,7 +60,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/logo_saude360.jpeg
+    - assets/images/Logo_360_fundo_transparente.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

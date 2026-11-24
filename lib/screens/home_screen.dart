@@ -46,24 +46,16 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// O JPEG tem fundo próprio (#F7F7F7); o cartão usa a mesma cor para o logo
-/// não aparecer como um retângulo solto.
+/// Logo em PNG com fundo transparente, direto sobre o fundo do tema.
 class _Logo extends StatelessWidget {
   const _Logo();
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => Image.asset(
+        'assets/images/Logo_360_fundo_transparente.png',
         height: 160,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF7F7F7),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Image.asset(
-          'assets/images/logo_saude360.jpeg',
-          fit: BoxFit.contain,
-          semanticLabel: 'Logo Saúde360 IA',
-        ),
+        fit: BoxFit.contain,
+        semanticLabel: 'Logo Saúde360',
       );
 }
 
