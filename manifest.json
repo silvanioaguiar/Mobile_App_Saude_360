@@ -1,0 +1,41 @@
+{
+    "name": "Saúde360 - Visitas e Usuários",
+    "short_name": "Saúde360",
+    "id": ".",
+    "start_url": ".",
+    "scope": ".",
+    "display": "standalone",
+    "background_color": "#E8F5FA",
+    "theme_color": "#002B4B",
+    "description": "Demonstração do Saúde360: cadastro de usuários e agenda de visitas domiciliares geradas pelo perfil do agente. Dados fictícios.",
+    "lang": "pt-BR",
+    "orientation": "portrait-primary",
+    "categories": ["health", "medical"],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
