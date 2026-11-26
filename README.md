@@ -180,19 +180,36 @@ Android, use o menu ⋮ → **Instalar app** (ou **Adicionar à tela inicial**).
 > Não use `flutter run -d chrome` para testar o PWA: no modo de desenvolvimento o service
 > worker fica desligado. Teste sempre o build de release.
 
-### Como publicar (GitHub Pages)
+### Publicação (GitHub Pages)
 
-O GitHub Pages hospeda a pasta gerada e já entrega HTTPS. Como o endereço fica em um
-subcaminho, o build precisa saber qual é:
+**Endereço do app:** <https://silvanioaguiar.github.io/Mobile_App_Saude_360/>
+
+O GitHub Pages hospeda os arquivos gerados e já entrega HTTPS. O código-fonte fica no branch
+`main` e o site pronto fica no branch `gh-pages` (só arquivos gerados, não se edita à mão).
+
+Como o endereço fica num subcaminho (`/Mobile_App_Saude_360/`), o build precisa saber qual é:
 
 ```bash
 flutter build web --release --base-href "/Mobile_App_Saude_360/"
 ```
 
-Depois publique o conteúdo de `build/web/` em um branch `gh-pages` (ou use uma GitHub Action) e
-ative o Pages em *Settings → Pages*. O endereço será
-`https://<usuario>.github.io/Mobile_App_Saude_360/`. O `--base-href` tem de começar e terminar com
-`/` e repetir o nome do repositório; se estiver errado, a página abre em branco.
+O `--base-href` tem de começar e terminar com `/` e repetir o nome do repositório; se estiver
+errado, a página abre em branco.
+
+> **Git Bash no Windows:** o terminal converte `/Mobile_App_Saude_360/` em um caminho do Windows e o
+> Flutter recusa o valor. Rode antes `export MSYS_NO_PATHCONV=1`, ou use o PowerShell.
+
+**Para publicar uma nova versão:**
+
+1. Rode o build acima.
+2. Copie o conteúdo de `build/web/` para uma pasta vazia e crie nela um arquivo `.nojekyll`
+   (impede o GitHub de processar os arquivos como site Jekyll).
+3. Nessa pasta: `git init -b gh-pages`, `git add -A`, `git commit`, e
+   `git push --force origin gh-pages` (substitui só o branch `gh-pages`).
+
+**Ligar o Pages (uma única vez, feito pelo dono do repositório):**
+*Settings → Pages → Build and deployment → Source: **Deploy from a branch** → Branch:
+**gh-pages** / **(root)** → Save.* Em 1 a 2 minutos o endereço acima passa a responder.
 
 ### Limitações conhecidas
 
