@@ -28,6 +28,17 @@ class Saude360App extends StatelessWidget {
       child: MaterialApp(
         title: 'Saúde360',
         theme: AppTheme.light,
+        // Em telas largas (PWA no computador/tablet) o app fica numa coluna
+        // centralizada de até 600 px, parecida com o celular.
+        builder: (context, child) => ColoredBox(
+          color: Cores.background,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: child,
+            ),
+          ),
+        ),
         initialRoute: '/',
         routes: {
           '/': (_) => const HomeScreen(),

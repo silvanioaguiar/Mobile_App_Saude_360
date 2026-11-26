@@ -11,7 +11,8 @@ Entrega: 03/12/2026, apenas via repositório.
 | Wellington Lima | Product Owner |
 | Lucas llech | Quality & Ops |
 
-Plataforma alvo: **Android**.
+Plataformas: **Android** (APK) e **Web instalável (PWA)**. A explicação do PWA está na
+seção [PWA: o app instalável pelo navegador](#pwa-o-app-instalável-pelo-navegador).
 
 App Flutter (Dart) com 5 telas do projeto Saúde360 IA do Bootcamp
 ([repositório do grupo](https://github.com/Saude360-IA/Software_Project_Saude360_Impacta_MBA)).
@@ -74,6 +75,135 @@ Para gerar o APK: `flutter build apk --debug` (saída em `build/app/outputs/flut
 > No Windows, o **Modo Desenvolvedor** precisa estar ativo
 > (`start ms-settings:developers`) para o Flutter instalar os plugins.
 
+## PWA: o app instalável pelo navegador
+
+### O que é um PWA?
+
+**PWA** (*Progressive Web App*) é um site que se comporta como um aplicativo: dá para
+**instalar** na tela inicial do celular ou do computador, abre em **tela cheia** (sem barra de
+endereço), tem **ícone e nome próprios** e **continua abrindo sem internet**.
+Não é uma tecnologia nova, e sim um conjunto de recursos do navegador usados em conjunto.
+
+Comparação rápida com o APK:
+
+| | APK (Android nativo) | PWA |
+| --- | --- | --- |
+| Como o usuário instala | Recebe o arquivo `.apk` ou baixa da loja | Abre o link e toca em "Instalar" |
+| Funciona em | Só Android | Android, Windows, macOS, Linux, ChromeOS (e iOS com limitações) |
+| Atualização | Instalar um APK novo | Automática: basta publicar de novo |
+| Acesso a recursos do aparelho | Total | Limitado ao que o navegador permite |
+| Esse projeto | `flutter build apk` | `flutter build web` |
+
+### Os 3 ingredientes de um PWA
+
+Para o navegador oferecer "Instalar app", o site precisa de três coisas. Pense numa loja:
+
+1. **HTTPS** (a porta de entrada segura). O service worker só funciona em endereço seguro
+   (`https://...`). A única exceção é `localhost`, para desenvolvimento.
+2. **Manifesto** (o cartão de visitas do app). Um arquivo JSON com nome, ícones, cores e modo de
+   exibição. É ele que diz ao sistema "este site é um app chamado Saúde360, com este ícone".
+3. **Service worker** (o funcionário que guarda o estoque). Um script que o navegador roda em
+   segundo plano, entre o app e a internet. Ele guarda cópias dos arquivos (cache) e, quando a
+   rede cai, entrega as cópias. É ele que permite abrir **offline**.
+
+### Como cada ingrediente foi feito neste projeto
+
+O Flutter Web já gera boa parte do PWA sozinho. O grupo configurou e personalizou o resto:
+
+| Ingrediente | Arquivo | Quem faz | O que foi feito |
+| --- | --- | --- | --- |
+| Manifesto | [`web/manifest.json`](web/manifest.json) | Grupo | Nome "Saúde360", `display: standalone` (tela cheia), cores do tema (`#002B4B` e `#E8F5FA`), idioma `pt-BR` e os ícones |
+| Ícones | `web/icons/` e `web/favicon.png` | Grupo | Gerados a partir do logo. O ícone `maskable` tem margem de segurança, porque o Android recorta em círculo ou quadrado arredondado |
+| Página de entrada | [`web/index.html`](web/index.html) | Grupo | Liga o manifesto, define `theme-color`, ajustes para iOS e uma tela de carregamento com o logo enquanto o Flutter inicia |
+| Service worker | `flutter_service_worker.js` | **Flutter**, no build | Criado automaticamente por `flutter build web`, com a lista de arquivos e uma versão de cada um |
+| HTTPS | Hospedagem | Quem publica | O GitHub Pages, por exemplo, já entrega HTTPS |
+
+O arquivo do service worker **não está no repositório**: ele nasce em `build/web/` a cada build.
+
+### O que acontece quando alguém usa o app
+
+```
+1ª visita (online)   O navegador baixa o app e registra o service worker.
+                     O service worker guarda os arquivos essenciais no cache.
+2ª visita (online)   Agora o service worker "assume" a página e guarda também a tela inicial.
+Sem internet         O service worker responde com as cópias do cache. O app abre normalmente.
+Nova versão          Ao publicar um build novo, o service worker percebe que os arquivos
+                     mudaram, baixa as novidades e as aplica na visita seguinte.
+```
+
+Por isso o app só funciona offline **a partir da segunda visita**. Isso é comportamento normal
+do Flutter, não um defeito.
+
+### Onde ficam os dados?
+
+O armazenamento local usa o pacote `shared_preferences`. No celular Android ele grava no
+próprio aparelho; na **web grava no `localStorage` do navegador**. Na prática:
+
+- os dados persistem ao fechar e reabrir o app, e funcionam offline;
+- ficam **só naquele navegador e naquele aparelho** (não sincronizam entre dispositivos);
+- se a pessoa limpar os dados do site, eles voltam ao padrão fictício.
+
+Isso é suficiente para a demonstração. Compartilhar dados entre aparelhos exigiria um backend,
+que está fora do escopo deste trabalho.
+
+### Mudanças feitas no app para a web
+
+- **Largura máxima de 600 px.** Em tela de computador, o conteúdo fica numa coluna centralizada,
+  parecida com a do celular (`builder` do `MaterialApp` em `lib/main.dart`). No celular nada muda.
+- **Mesmo código para tudo.** As telas, o estado e os testes são os mesmos do Android. Só a pasta
+  `web/` é específica do PWA.
+
+### Como testar o PWA
+
+```bash
+flutter build web --release          # gera build/web (inclui o service worker)
+```
+
+Sirva a pasta `build/web` com qualquer servidor estático e abra em `http://localhost:<porta>`
+(o `localhost` é aceito sem HTTPS). Exemplos:
+
+```bash
+cd build/web
+npx http-server -p 8080              # precisa do Node.js
+# ou: python -m http.server 8080     # precisa do Python
+```
+
+No Chrome, abra as **Ferramentas do desenvolvedor (F12) → Application**:
+
+- **Manifest**: confere nome, cores e ícones.
+- **Service Workers**: deve aparecer `flutter_service_worker.js` como *activated*.
+- Marque **Offline**, recarregue a página e veja o app abrir.
+
+Para instalar: no Chrome do computador, clique no ícone de instalar na barra de endereço; no
+Android, use o menu ⋮ → **Instalar app** (ou **Adicionar à tela inicial**).
+
+> Não use `flutter run -d chrome` para testar o PWA: no modo de desenvolvimento o service
+> worker fica desligado. Teste sempre o build de release.
+
+### Como publicar (GitHub Pages)
+
+O GitHub Pages hospeda a pasta gerada e já entrega HTTPS. Como o endereço fica em um
+subcaminho, o build precisa saber qual é:
+
+```bash
+flutter build web --release --base-href "/Mobile_App_Saude_360/"
+```
+
+Depois publique o conteúdo de `build/web/` em um branch `gh-pages` (ou use uma GitHub Action) e
+ative o Pages em *Settings → Pages*. O endereço será
+`https://<usuario>.github.io/Mobile_App_Saude_360/`. O `--base-href` tem de começar e terminar com
+`/` e repetir o nome do repositório; se estiver errado, a página abre em branco.
+
+### Limitações conhecidas
+
+- **iPhone/iPad:** o Safari instala PWAs por **Compartilhar → Adicionar à Tela de Início** e
+  limita parte dos recursos. Por isso `index.html` tem meta tags específicas para iOS.
+- **Primeira visita precisa de internet.** Só depois de carregar uma vez o app passa a funcionar
+  offline.
+- **Cache pode mostrar versão antiga.** Depois de publicar uma atualização, pode ser preciso
+  fechar e reabrir o app uma vez para a nova versão aparecer.
+- **Dados locais:** ver a seção "Onde ficam os dados?".
+
 ## Estrutura
 
 ```
@@ -83,5 +213,6 @@ lib/
   data/                # Repositorio (estado + persistência), EscopoRepositorio, gerarAgenda
   screens/             # 5 telas
   widgets/             # componentes reutilizáveis
+web/                   # PWA: manifest.json, index.html, ícones
 test/app_test.dart     # modelos, repositório e fluxos de widget
 ```
